@@ -55,3 +55,23 @@ The Nelder-Mead algorithm is relatively simple to implement and does not require
 
 These steps are repeated iteratively until the termination conditions are met, allowing the algorithm to converge towards the minimum (or maximum) of the objective function. The choice of reflection, expansion, contraction, and shrink parameters may vary depending on the specific implementation and problem at hand.
 
+## example C code for Nelder-Mead algorithm with 64 nodes. 
+But to define the objective function `objective_func()` for your specific optimization problem using the Nelder-Mead algorithm, you need your own implementation. Here's a example with Quadratic function :
+
+```c
+double objective_func(double* parameters) {
+    // Replace this example implementation with your own objective function
+    // that suits your optimization problem.
+    
+    // Example: Quadratic function f(x) = x^2 + 2x + 1
+    double x = parameters[0];
+    double result = pow(x, 2) + 2 * x + 1;
+    
+    return result;
+}
+```
+
+In this revised example, the objective function takes a single parameter `x` from the `parameters` array and calculates the corresponding function value based on the quadratic equation `f(x) = x^2 + 2x + 1`. 
+
+You should replace this example implementation with your own objective function that fits your optimization problem. The objective function should accept an array of parameters and return the corresponding function value based on those parameters.
+
