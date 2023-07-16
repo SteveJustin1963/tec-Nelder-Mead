@@ -87,4 +87,9 @@ You should replace this example implementation with your own objective function 
 4. 4. Initialize Simplex: Create a Forth word to initialize the simplex. Since Forth uses a stack, you can modify the `initialize_simplex` function to take the simplex array as input and initialize it directly. 
 5. Evaluate Simplex: Define a Forth word to evaluate the objective function for each node in the simplex. Modify the `evaluate_simplex` function to take the simplex and f_values arrays as input and evaluate the function directly. 
 6. Order Simplex: Create a Forth word to order the simplex based on the function values. Modify the `order_simplex` function to take the simplex and f_values arrays as input and sort them accordingly.  
-7. Perform Nelder-Mead Algorithm: Define a Forth word to perform the Nelder-Mead algorithm. Modify the `nelder_mead` function to use Forth stack operations and allocate memory dynamically using the `ALLOCATE` word. 
+7. Perform Nelder-Mead Algorithm: Define a Forth word to perform the Nelder-Mead algorithm. Modify the `nelder_mead` function to use Forth stack operations and allocate memory dynamically using the `ALLOCATE` word.
+
+## Ref 
+- https://rachel-sunrui.github.io/posts/2018/12/simplex/
+- https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
+- 
