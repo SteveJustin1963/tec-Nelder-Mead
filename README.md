@@ -79,7 +79,8 @@ You should replace this example implementation with your own objective function 
 
 1. Remove Libraries: Since Forth does not have built-in libraries like C, you can remove the `#include` statements for `stdio.h`, `stdlib.h`, and `math.h`. 
 2. Define Constants: Replace the `#define` statements with Forth constants.  
-3. Create Objective Function: Define a Forth word to represent the objective function. Forth does not have a power operator, so you can define a separate word for squaring. 4. Initialize Simplex: Create a Forth word to initialize the simplex. Since Forth uses a stack, you can modify the `initialize_simplex` function to take the simplex array as input and initialize it directly. 
+3. Create Objective Function: Define a Forth word to represent the objective function. Forth does not have a power operator, so you can define a separate word for squaring.
+4. 4. Initialize Simplex: Create a Forth word to initialize the simplex. Since Forth uses a stack, you can modify the `initialize_simplex` function to take the simplex array as input and initialize it directly. 
 5. Evaluate Simplex: Define a Forth word to evaluate the objective function for each node in the simplex. Modify the `evaluate_simplex` function to take the simplex and f_values arrays as input and evaluate the function directly. 
 6. Order Simplex: Create a Forth word to order the simplex based on the function values. Modify the `order_simplex` function to take the simplex and f_values arrays as input and sort them accordingly.  
 7. Perform Nelder-Mead Algorithm: Define a Forth word to perform the Nelder-Mead algorithm. Modify the `nelder_mead` function to use Forth stack operations and allocate memory dynamically using the `ALLOCATE` word. 
