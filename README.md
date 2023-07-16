@@ -1,5 +1,7 @@
 # tec-Nelder-Mead
 
+![image](https://github.com/SteveJustin1963/tec-Nelder-Mead/assets/58069246/20480318-f9f3-4f49-8b70-462d67426d20)
+
 The Nelder-Mead algorithm, also known as the downhill simplex method, is an optimization algorithm used to find the minimum (or maximum) of an objective function in a multi-dimensional space. It is an iterative algorithm that belongs to the class of direct search methods, which means it does not rely on the gradient of the objective function.
 
 The Nelder-Mead algorithm operates on a simplex, which is a geometrical shape consisting of n+1 points in an n-dimensional space. These points represent the current set of candidate solutions. At each iteration, the algorithm performs certain operations on the simplex to update its shape and location based on the values of the objective function at the simplex vertices.
