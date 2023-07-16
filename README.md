@@ -93,4 +93,4 @@ You should replace this example implementation with your own objective function 
 - https://rachel-sunrui.github.io/posts/2018/12/simplex/
 - https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method
 - https://codesachin.wordpress.com/2016/01/16/nelder-mead-optimization/
-- 
+- https://www.youtube.com/watch?v=_CwUuyN6NTE&ab_channel=TheFACTsofMechanicalDesign
