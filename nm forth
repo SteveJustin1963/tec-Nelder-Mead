@@ -1,0 +1,83 @@
+
+
+
+///////////////////////////////////////////////
+
+
+// Constants and Parameters
+1000 max-iter !          // Set maximum iterations
+1024 scale !             // Scaling factor for fixed-point (2^10)
+
+// Coefficients for Nelder-Mead
+1 rho ! rho scale * rho !   // Reflection coefficient
+2 chi ! chi scale * chi !   // Expansion coefficient
+0.5 gamma ! gamma scale * gamma !
+0.5 sigma ! sigma scale * sigma !
+
+// Objective Function (e.g., Rosenbrock Function)
+:A  x @ 1 - x @ 1 - * 100 * y @ x @ x @ * - y @ - * + ;  
+// Function A: Calculate (1 - x)^2 + 100 * (y - x^2)^2
+
+// Initialize Simplex Function
+:B
+  [ 0 0 ] simplex !         // Initialize a 2D simplex with example points
+  simplex 0?  -1.2 scale * !
+  simplex 1? 1 scale * !
+;
+
+// Evaluate Simplex
+:C
+  simplex 0? A f0 !
+  simplex 1? A f1 !
+;
+
+// Sort Simplex
+:D
+  f0 @ f1 @ < ( 
+    simplex 0? simplex 1? swap 
+  ) /E ( 
+    simplex 0? simplex 1? 
+  )
+;
+
+// Reflect, Expand, Contract, Shrink Operations
+:E
+  simplex 0? simplex 1? + 2 / centroid !
+  centroid @ rho * simplex 1? - reflection !
+;
+
+// Nelder-Mead Main Loop
+:F
+  0 iter !
+  max-iter ( 
+    simplex C  // Evaluate the simplex
+    simplex D  // Sort the simplex
+    f0 @ tol < ( break )  // Convergence check using tolerance
+    simplex E  // Perform reflection operation
+
+    reflection @ f0 @ < (
+      simplex 0? chi * expand !
+      expand @ f_expand !
+      f_expand @ reflection @ < (
+        simplex 0? expand @ !
+      ) /E (
+        simplex 0? reflection @ !
+      )
+    ) /E (
+      reflection @ f1 @ < (
+        simplex 0? reflection @ !
+      ) /E (
+        simplex 0? gamma * contract !
+        contract @ f_contract !
+        f_contract @ reflection @ < (
+          simplex 0? contract @ !
+        ) /E (
+          simplex 0? simplex 1? + sigma * shrink !
+          simplex shrink @ !
+        )
+      )
+    )
+
+    iter 1 + iter !  // Increment the iteration count
+  )
+;
