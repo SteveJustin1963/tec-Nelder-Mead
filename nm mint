@@ -1,3 +1,80 @@
+////////////////////
+1000 i !
+1024 s !
+
+1024 r !
+2048 c !
+512 g !
+512 z !
+
+1 t !
+
+:A
+  x @ s / 1 - s * x @ s / 1 - s * * 100 * s * y @ 
+  s / x @ s / x @ s / * - s * y @ s / - s * + s /
+;
+
+:B
+  [ 0 0 ] p !
+  -1229 p 0? $ !
+  1024 p 1? $ !
+;
+
+:C
+  p 0? A f !
+  p 1? A g !
+;
+
+:D
+  f @ g @ < ( 
+    p 0? p 1? $
+  ) /E ( 
+    p 0? p 1?
+  )
+;
+
+:E
+  p 0? p 1? + 2 / b !
+  b @ r * s / p 1? - x !
+;
+
+:F
+  0 j !
+  /U (
+    p C
+    p D
+    f @ t < /W
+    p E
+
+    x @ f @ < (
+      c * s / y !
+      y @ h !
+      h @ x @ < (
+        y p 0? $ !
+      ) /E (
+        x p 0? $ !
+      )
+    ) /E (
+      x @ g @ < (
+        x p 0? $ !
+      ) /E (
+        g * s / w !
+        w @ v !
+        v @ x @ < (
+          w p 0? $ !
+        ) /E (
+          p 1? z * s / u !
+          u p 0? $ !
+        )
+      )
+    )
+
+    j 1 + j !
+  )
+;
+
+////////////////////
+
 // Constants and Parameters
 1000 i !          // Set maximum iterations ('i')
 1024 s !          // Set scaling factor ('s') for fixed-point (2^10)
