@@ -1,83 +1,82 @@
-
-
-
-///////////////////////////////////////////////
-
-
 // Constants and Parameters
-1000 max-iter !          // Set maximum iterations
-1024 scale !             // Scaling factor for fixed-point (2^10)
+1000 i !          // Set maximum iterations ('i')
+1024 s !          // Set scaling factor ('s') for fixed-point (2^10)
 
 // Coefficients for Nelder-Mead
-1 rho ! rho scale * rho !   // Reflection coefficient
-2 chi ! chi scale * chi !   // Expansion coefficient
-0.5 gamma ! gamma scale * gamma !
-0.5 sigma ! sigma scale * sigma !
+1024 r !          // Set reflection coefficient ('r'), scaled by 's'
+2048 c !          // Set expansion coefficient ('c'), scaled by 's' (2 * s)
+512 g !           // Set contraction coefficient ('g'), scaled by 's' (0.5 * s)
+512 z !           // Set shrink coefficient ('z'), scaled by 's' (0.5 * s)
 
-// Objective Function (e.g., Rosenbrock Function)
-:A  x @ 1 - x @ 1 - * 100 * y @ x @ x @ * - y @ - * + ;  
-// Function A: Calculate (1 - x)^2 + 100 * (y - x^2)^2
+// Tolerance for Convergence
+1 t !             // Set tolerance ('t'), scaled as 0.001 * 's'
+
+// Objective Function (Rosenbrock-like Function)
+:A
+  x @ s / 1 - s * x @ s / 1 - s * * 100 * s * y @ s / x @ s / x @ s / * - s * y @ s / - s * + s /
+;  
+// Function A: Calculate (1 - x)^2 + 100 * (y - x^2)^2 with integer scaling
 
 // Initialize Simplex Function
 :B
-  [ 0 0 ] simplex !         // Initialize a 2D simplex with example points
-  simplex 0?  -1.2 scale * !
-  simplex 1? 1 scale * !
+  [ 0 0 ] p !                     // Initialize a 2D simplex with example points, stored in 'p'
+  -1229 p 0? $ !                  // Set the first vertex to -1.2 (scaled value) using the correct update method
+  1024 p 1? $ !                   // Set the second vertex to 1 (scaled value) using the correct update method
 ;
 
 // Evaluate Simplex
 :C
-  simplex 0? A f0 !
-  simplex 1? A f1 !
+  p 0? A f !                      // Evaluate the objective function at the first vertex and store in 'f'
+  p 1? A g !                      // Evaluate the objective function at the second vertex and store in 'g'
 ;
 
 // Sort Simplex
 :D
-  f0 @ f1 @ < ( 
-    simplex 0? simplex 1? swap 
+  f @ g @ < ( 
+    p 0? p 1? $                   // If f < g, swap the vertices in the simplex using the '$' operator
   ) /E ( 
-    simplex 0? simplex 1? 
+    p 0? p 1?                     // Else, keep the vertices as they are
   )
 ;
 
 // Reflect, Expand, Contract, Shrink Operations
 :E
-  simplex 0? simplex 1? + 2 / centroid !
-  centroid @ rho * simplex 1? - reflection !
+  p 0? p 1? + 2 / b !             // Calculate the centroid of the simplex and store it in 'b'
+  b @ r * s / p 1? - x !          // Perform reflection calculation and store the reflected point in 'x'
 ;
 
 // Nelder-Mead Main Loop
 :F
-  0 iter !
-  max-iter ( 
-    simplex C  // Evaluate the simplex
-    simplex D  // Sort the simplex
-    f0 @ tol < ( break )  // Convergence check using tolerance
-    simplex E  // Perform reflection operation
+  0 j !                           // Initialize the iteration count ('j') to 0
+  /U (                            // Start an unlimited loop
+    p C                           // Evaluate the objective function at the simplex vertices
+    p D                           // Sort the simplex based on function values
+    f @ t < /W                    // If the function value 'f' is less than the tolerance 't', exit the loop
+    p E                           // Perform the reflection operation
 
-    reflection @ f0 @ < (
-      simplex 0? chi * expand !
-      expand @ f_expand !
-      f_expand @ reflection @ < (
-        simplex 0? expand @ !
+    x @ f @ < (                   // If the reflected value is better than the best value
+      c * s / y !                 // Calculate expansion and store in 'y'
+      y @ h !
+      h @ x @ < (
+        y p 0? $ !                // Update the simplex with the expanded point using the correct update method
       ) /E (
-        simplex 0? reflection @ !
+        x p 0? $ !                // Update the simplex with the reflected point using the correct update method
       )
     ) /E (
-      reflection @ f1 @ < (
-        simplex 0? reflection @ !
+      x @ g @ < (                 // If the reflected value is worse but better than the second worst
+        x p 0? $ !                // Update the simplex with the reflected point using the correct update method
       ) /E (
-        simplex 0? gamma * contract !
-        contract @ f_contract !
-        f_contract @ reflection @ < (
-          simplex 0? contract @ !
+        g * s / w !
+        w @ v !
+        v @ x @ < (
+          w p 0? $ !              // Update the simplex with the contracted point using the correct update method
         ) /E (
-          simplex 0? simplex 1? + sigma * shrink !
-          simplex shrink @ !
+          p 1? z * s / u !
+          u p 0? $ !              // Perform shrink operation and update the simplex using the correct update method
         )
       )
     )
 
-    iter 1 + iter !  // Increment the iteration count
+    j 1 + j !                     // Increment the iteration count
   )
 ;
