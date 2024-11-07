@@ -1,0 +1,191 @@
+// ======= APU Constants for AM9511 Chip =======
+#10 k! // FADD - Add floating point
+#12 m! // FMUL - Multiply floating point
+#13 d! // FDIV - Divide floating point
+#01 s! // FSQRT - Square root
+// Port addresses: 0x80 for data, 0x81 for command
+
+// ======= Send float to APU =======
+// Takes 32-bit number and sends as 4 bytes to APU
+:F n! 
+n #FF & #80 /O      // Send LSB to port 0x80
+n 8 } #FF & #80 /O  // Send byte 2
+n 16 } #FF & #80 /O // Send byte 3
+n 24 } #FF & #80 /O // Send MSB
+;
+
+// ======= Read float from APU =======
+// Reads 4 bytes from APU and combines to 32-bit number
+:G 
+0 n! 0 m! 0 o! 0 p!  // Clear vars first
+#80 /I n!            // Read LSB from port 0x80
+#80 /I 8 { m!        // Read and shift byte 2
+#80 /I 16 { o!       // Read and shift byte 3
+#80 /I 24 { p!       // Read MSB
+n m | o | p |        // Combine all bytes
+;
+
+// ======= Send command to APU and wait =======
+:W n! 
+n #81 /O             // Send command to port 0x81
+/( #81 /I 128 & /D 5 > ( ' ) ) // Wait for done bit
+;
+
+// ======= Array Initialization =======
+:A 
+[0 0 0 0 0 0] x!    // x coordinates for 3 points
+[0 0 0 0 0 0] y!    // y coordinates for 3 points
+[0 0 0] f!          // function values
+0 v! 0 u!           // Clear temp variables
+;
+
+// ======= Safe Array Access =======
+// Get x coordinate with bounds check
+:X i! 
+i 6 < ( i 2* x ? ) /E ( 0 ) 
+;
+
+// Get y coordinate with bounds check
+:Y i! 
+i 6 < ( i 2* y ? ) /E ( 0 ) 
+;
+
+// ======= Objective Function =======
+// Calculates f(x,y) = x^2 + y^2 for point i
+:O i! 
+i 3 < (             // Check point index valid
+    i X F           // Get x coord
+    G F G F         // Duplicate x
+    m W             // Multiply (x^2)
+    G v!            // Save x^2
+    i Y F           // Get y coord
+    G F G F         // Duplicate y
+    m W             // Multiply (y^2)
+    v F             // Get saved x^2
+    k W             // Add x^2 + y^2
+    G i f ?!        // Store result in f array
+) /E (
+    `Bad index` /N
+)
+;
+
+// ======= Initialize Simplex =======
+// Creates initial triangle of points
+:I
+0 3 < (             // Safety check
+    // Point 1 at origin
+    0.0 0 X !       // P1(0,0)
+    0.0 0 Y !
+    // Point 2 on x axis
+    1.0 1 X !       // P2(1,0)
+    0.0 1 Y !
+    // Point 3 on y axis
+    0.0 2 X !       // P3(0,1)
+    1.0 2 Y !
+    // Calculate initial function values
+    3 (            // For each point
+        i O        // Calculate objective
+    )
+) /E (
+    `Init error` /N
+)
+;
+
+// ======= Find Best and Worst Points =======
+:B 
+0 b! 0 w!          // Initialize indices
+3 (                // Check all points
+    i f ? w f ? > ( // If worse than worst
+        i 3 < ( i w! ) 
+    )
+    i f ? b f ? < ( // If better than best
+        i 3 < ( i b! ) 
+    )
+)
+;
+
+// ======= Calculate Centroid =======
+// Finds center point excluding worst point
+:C
+0.0 v! 0.0 u!      // Clear sums
+3 (                // For each point
+    i w <> (       // If not worst point
+        i X F      // Get x
+        v F k W    // Add to sum
+        G v!       // Store x sum
+        i Y F      // Get y
+        u F k W    // Add to sum
+        G u!       // Store y sum
+    )
+)
+// Divide sums by 2 (number of good points)
+2.0 F v F d W G v! // Centroid x
+2.0 F u F d W G u! // Centroid y
+;
+
+// ======= Calculate Reflection Point =======
+:R
+// Reflect worst point through centroid
+v F w X F          // centroid_x - worst_x
+1.0 F m W          // Times reflection factor
+G v F k W          // Add centroid_x
+G p!               // Store reflect_x
+u F w Y F          // centroid_y - worst_y
+1.0 F m W          // Times reflection factor
+G u F k W          // Add centroid_y
+G q!               // Store reflect_y
+;
+
+// ======= Main Step =======
+:S
+/D 0 = (           // Check stack empty
+    B              // Find best/worst
+    C              // Get centroid
+    R              // Calculate reflection
+    p w 2* x ?!    // Update worst x
+    q w 2* y ?!    // Update worst y
+    w O            // Evaluate new point
+) /E (
+    `Stack err` /N
+)
+;
+
+// ======= Print Current State =======
+:P
+`+=================+=================+=================+` /N
+`|  Point  |    X    |    Y    |   Value   |` /N
+`+=================+=================+=================+` /N
+3 (
+    `|    ` i . 
+    `    |  ` i X .
+    `  |  ` i Y .
+    `  |  ` i f ? .
+    `   |` /N
+)
+`+=================+=================+=================+` /N
+;
+
+// ======= Main Optimization Loop =======
+:M n!
+n 100 < (          // Check iteration limit
+    A I            // Setup arrays
+    `Initial State:` /N
+    P              // Show start
+    n (            // Do n iterations
+        S          // Optimization step
+        i 1+ 5 % 0 = ( // Every 5 steps
+            `Step ` i . `:` /N
+            P      // Show progress
+        )
+    )
+    `Final State:` /N
+    P              // Show end
+) /E (
+    `Too many iterations` /N
+)
+;
+
+// ======= Usage =======
+// Type: 20 M
+// This runs 20 iterations trying to minimize x^2 + y^2
+// Should converge toward (0,0)
