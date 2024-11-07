@@ -50,7 +50,7 @@ These steps are repeated iteratively until the termination conditions are met, a
 sample output running `20 M` in MINT2:
 
 
-
+```
 Initial State:
 +=================+=================+=================+
 |  Point  |    X    |    Y    |   Value   |
@@ -95,7 +95,7 @@ Final State:
 |    1    |  0.0625  |  0.0312  |  0.0048   |
 |    2    |  0.0312  |  0.0625  |  0.0048   |
 +=================+=================+=================+
-
+```
 
 Key observations:
 1. Initial triangle has points at:
