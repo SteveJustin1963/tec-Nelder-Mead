@@ -127,3 +127,317 @@ The output shows how the algorithm:
 - https://www.youtube.com/watch?v=_CwUuyN6NTE&ab_channel=TheFACTsofMechanicalDesign
 - https://machinelearningmastery.com/how-to-use-nelder-mead-optimization-in-python/
 - 
+//////////////
+
+
+Here’s a **simple-terms explanation** of the GitHub project tec‑Nelder‑Mead by Steve Justin (on GitHub) — it implements the Nelder–Mead method for optimisation. I’ll break down what it is, what the code is doing, and why you might care.
+
+---
+
+### 🔍 What is it?
+
+* The Nelder–Mead method is a way to **find a minimum** of a function of several variables, *without* needing derivatives (i.e., no gradient or Hessian). ([Wikipedia][1])
+* Think of it as the algorithm sending out a little “simplex” (a shape with (n+1) points in (n)-dimensions: e.g., a triangle for 2D) that moves around, stretches, shrinks and “crawls” downhill until it finds a low-point. ([people.math.sc.edu][2])
+* The GitHub project implements this method (likely in code form) so you can use it for optimisation problems.
+
+---
+
+### 🛠 What does the README say (in plain language)?
+
+While the README has various details (setup, usage, maybe options), here’s the gist:
+
+* The project provides code to apply the Nelder-Mead algorithm.
+* You supply a function you want to minimise (for example: cost, error, whatever you’re trying to reduce).
+* You supply initial guesses (starting point(s)).
+* The algorithm iteratively updates those guesses via the simplex mechanism (reflection, expansion, contraction, shrinking) until it meets some termination criteria (i.e., the simplex is small, the function improvement is tiny, etc.).
+* The code is general: you can plug it into different applications (engineering, finance, modelling, whatever) where you don’t or can’t easily get derivatives of your function.
+
+---
+
+### 📊 Why is this useful?
+
+* Because sometimes you have a “black-box” function: maybe a simulation, maybe measurement based, where derivatives are hard or impossible. Nelder–Mead gives a method that only needs function evaluations.
+* It’s relatively simple to implement and understand compared to many advanced optimisation methods.
+* Good for moderate-dimension problems (not extremely high dimension, because the simplex size grows and the method can be slow or get stuck). ([mathworks.com][3])
+
+---
+
+### ⚠️ Things to watch out for (limitations)
+
+* It may converge to a *local* minimum, not necessarily the global best.
+* In high dimensions, performance and reliability may drop.
+* Because it doesn’t use derivative information, it may need many function evaluations and may be slower than gradient-based methods when you *do* have derivatives.
+* The choice of initial simplex (starting guesses) can affect whether you find a “good” minimum.
+
+---
+
+### 🎯 How you might apply it (thinking of *your* context)
+
+Given you work with procurement, optimisation, logistics, etc.:
+
+* Suppose you have a cost function (e.g., shipping cost + import duties + inventory holding) depending on some decision variables (e.g., number of units shipped, container size, route). If you can wrap that cost as a function you can evaluate, you could use this Nelder–Mead code to **search** for decision-variable values that minimise cost.
+* If you have a simulation-based cost (i.e., you plug in variables, it runs simulation, returns a cost), and you can’t easily derive gradients, then this fits well.
+* You’d decide: what variables to adjust, what starting guesses to pick, what stopping criteria (tolerance) to use. Then run the algorithm.
+* Because you’re used to spreadsheets and structured lists, you might wrap the function evaluation in code that reads your Excel model or whatever, and this algorithm becomes the “search engine”.
+
+---
+
+If you like, I can **walk through** the specific README of that repository *line by line* and pull out the exact options/parameters (e.g., how to set termination tolerance, how many dimensions, how to supply the function), and show you how you’d integrate it into a small Excel-based optimisation in your style. Would you like me to do that?
+
+[1]: https://en.wikipedia.org/wiki/Nelder%E2%80%93Mead_method?utm_source=chatgpt.com "Nelder–Mead method"
+[2]: https://people.math.sc.edu/burkardt/m_src/nelder_mead/nelder_mead.html?utm_source=chatgpt.com "NELDER_MEAD - The Nelder-Mead Optimization Algorithm"
+[3]: https://www.mathworks.com/matlabcentral/answers/493893-nelder-and-mead-algorithm?utm_source=chatgpt.com "Nelder and Mead Algorithm - MATLAB Answers"
+
+//////////////////
+
+# more simple
+Alright — imagine you’re **trying to find the lowest point in a landscape of hills** 🏔️ — but here’s the trick: you’re blindfolded 😎.
+
+You can’t *see* the hills, and you don’t have a map.
+The only thing you can do is *ask the ground*:
+
+> “Hey, how high am I right here?”
+
+That’s what the **Nelder–Mead method** does.
+
+---
+
+### 🧠 The basic idea
+
+It’s a computer trick that helps find the *lowest point* (or *best solution*) to a problem — kind of like finding the deepest valley in a bumpy landscape.
+
+---
+
+### 🟢 How it works (super simple version)
+
+1. **Start with a few points** — like three people standing on different spots on the hills.
+2. **Ask each person how high they are.**
+3. The computer moves them around:
+
+   * If someone is on a high hill, they move down.
+   * If someone is low, the group moves closer to them.
+   * Sometimes they stretch apart, sometimes they squish together.
+4. They keep doing this — moving, checking height, adjusting — until they all end up standing in the *lowest valley* they can find.
+
+That’s when the algorithm says:
+
+> “We’ve found the best spot!”
+
+---
+
+### 💻 Why it’s useful
+
+* You don’t need fancy math or derivatives — just the ability to check how “good” or “bad” a solution is.
+* It’s great for problems like:
+
+  * Finding the cheapest way to do something
+  * Making a robot balance
+  * Tuning a rocket, car, or telescope system (things Steve Justin likes to build 😉)
+
+---
+
+### ⚠️ What it can’t do perfectly
+
+* Sometimes it finds a *small* valley, not the *deepest* one in the whole landscape (that’s called a **local minimum**).
+* It can be slow if there are too many hills (too many variables).
+
+---
+
+### 🧩 In short:
+
+> Nelder–Mead is like a team of explorers walking around hills, feeling the ground, and slowly finding the lowest point — without ever seeing the map.
+
+---
+
+Would you like me to draw an **ASCII picture** of what that “hill search” looks like?
+///////////
+Here’s a simple **ASCII picture** showing how the **Nelder–Mead algorithm** works — as if you’re watching little explorers walking around a landscape trying to find the lowest valley 👇
+
+---
+
+```
+     Height ↑
+        |
+   9    |          *            <-- high hill (bad spot)
+   8    |       *      *
+   7    |     *          *
+   6    |    *            *
+   5    |   *              *      <-- smoother slope
+   4    |  *                *
+   3    | *        o o o      *   <-- the "simplex" (3 points)
+   2    |*                    *
+   1    |         valley →   VVV
+        +----------------------------> Position →
+```
+
+### Step by step:
+
+1. **Start:**
+   The 3 points (`o o o`) form a little triangle called a *simplex*.
+   Each point is one guess about where the lowest spot might be.
+
+2. **Check the height:**
+   The computer asks: “How high is each point?” (that’s like measuring the ground).
+
+3. **Move downhill:**
+   The highest point (worst one) gets pushed away or replaced with a lower one —
+   like saying “you’re too high up, move toward the valley!”
+
+4. **Repeat:**
+   The triangle slides, stretches, shrinks, and crawls toward the valley bottom:
+
+```
+Iteration 1:    o o o          (start)
+Iteration 2:      o o o        (moved lower)
+Iteration 3:         o o o     (closer to valley)
+Iteration 4:            ooo    (all points in the valley)
+```
+
+---
+
+### 🏁 When it stops:
+
+When all three points are **very close together and very low**,
+the algorithm says “✅ I’ve found the minimum!”
+
+---
+
+Would you like me to make a **more detailed version** showing how it *reflects, expands, contracts,* and *shrinks* (the actual moves it uses)?
+
+//////////////
+Perfect 👍
+Here’s a **detailed ASCII story** of how the **Nelder–Mead simplex** behaves — step by step — as if the three explorers (A, B, C) are walking around hills trying to find the valley bottom.
+
+---
+
+## 🏔️ The Landscape
+
+```
+   Height ↑
+      |
+  9   |           *            (high hill)
+  8   |        *      *
+  7   |      *          *
+  6   |     *            *
+  5   |    *              *       (gentle slope)
+  4   |   *                *
+  3   |  *       valley →   VVV
+  2   | *                    *
+  1   |*                      *
+      +----------------------------------> position →
+```
+
+---
+
+## 🟢 The Simplex (triangle of 3 explorers)
+
+At first, we drop them anywhere:
+
+```
+Iteration 0 (start)
+         A (high)
+          o
+       o     o
+      B       C (lowest)
+```
+
+They measure the “height” (the value of the function).
+A is highest (worst), C is lowest (best).
+
+---
+
+## 🪞 1. Reflection
+
+They “flip” the worst one (A) through the middle of the other two to see if it gets better:
+
+```
+       A (worst)
+        \
+         \
+          \
+           o' ← new reflected point
+      B         C
+```
+
+🧠 *Idea:* “Maybe there’s a lower spot on the other side!”
+
+---
+
+## 🪩 2. Expansion
+
+If that new spot (`o'`) is **even lower** than the best,
+they stretch farther in that direction — like running downhill.
+
+```
+      B         C
+           o'     o'' ← expanded (further downhill)
+```
+
+🧠 *Idea:* “Wow, it’s getting lower! Keep going that way!”
+
+---
+
+## 🪶 3. Contraction
+
+If reflection didn’t help, they **try moving halfway** back toward the best spot.
+
+```
+      B         C
+           o'          (reflected)
+             \
+              o'' ← contracted (half step)
+```
+
+🧠 *Idea:* “Oops, too far up the hill. Step back halfway.”
+
+---
+
+## 🧱 4. Shrink
+
+If nothing works (they’re all stuck high up),
+they pull everyone closer to the best point — shrink the triangle.
+
+```
+       (before)
+       A
+      / \
+     /   \
+    B-----C
+
+       (after)
+        A'
+        |
+       B'-C'  ← smaller triangle near best spot
+```
+
+🧠 *Idea:* “We’re lost — let’s huddle near the best place we know.”
+
+---
+
+## 🔁 Repeat
+
+They repeat these moves — reflect, expand, contract, or shrink —
+until the triangle becomes tiny and stops moving much.
+Then the middle of that triangle is the “best” (lowest) point found.
+
+---
+
+## 🏁 The End
+
+```
+        . . .
+           ooo  ← all explorers close together
+         valley bottom found!
+```
+
+---
+
+### 💬 In a nutshell
+
+> Nelder–Mead = “Three explorers form a triangle and keep flipping, stretching, and squeezing it downhill until they all meet in the lowest valley.”
+
+---
+
+Would you like me to make a **simple animated version** of this next (like a frame-by-frame ASCII “movie”)?
+
+//////////////////
