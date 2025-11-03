@@ -441,3 +441,123 @@ Then the middle of that triangle is the “best” (lowest) point found.
 Would you like me to make a **simple animated version** of this next (like a frame-by-frame ASCII “movie”)?
 
 //////////////////
+Awesome 😄 Here’s a **frame-by-frame ASCII “movie”** showing how the **Nelder–Mead** simplex crawls down a hill to the valley bottom — using three explorers: **A**, **B**, and **C**.
+
+---
+
+### 🎬 FRAME 1 — Start (random triangle on the hill)
+
+```
+   height ↑
+        |
+    8   |          A
+    7   |       B      C
+    6   |_________________________
+            starting positions
+```
+
+A, B, C are at different heights.
+A is highest (worst), C is lowest (best).
+
+---
+
+### 🎬 FRAME 2 — Reflection
+
+```
+   8   |              A✕   (flipped over line BC)
+   7   |       B------●------C
+   6   |_________________________
+             reflection
+```
+
+We reflect A through the middle of line B–C.
+→ The new point (●) is lower than A — good move!
+
+---
+
+### 🎬 FRAME 3 — Expansion
+
+```
+   8   |                A✕
+   7   |       B------●------C
+   6   |                ●●    ← expanded even further down
+   5   |_________________________
+```
+
+The new expanded point is **even lower**,
+so we keep it and replace the old A.
+
+---
+
+### 🎬 FRAME 4 — New triangle
+
+```
+   8   |
+   7   |        B
+   6   |             C
+   5   |                    A(new)
+   4   |_________________________
+```
+
+Now our triangle has **slid downhill**!
+The group is closer to the valley bottom.
+
+---
+
+### 🎬 FRAME 5 — Contraction
+
+```
+   7   |        B
+   6   |             C
+   5   |             ● ← halfway step (contracted)
+   4   |_________________________
+```
+
+If expansion failed (too high),
+they’d move **halfway back** instead.
+
+---
+
+### 🎬 FRAME 6 — Shrink
+
+```
+   6   |             o
+   5   |          o     o
+   4   |_________________________
+           smaller triangle
+```
+
+If everyone’s stuck, the triangle **shrinks** near the best point —
+they “huddle together” and search a smaller area.
+
+---
+
+### 🎬 FRAME 7 — Final convergence
+
+```
+   5   |         .
+   4   |        ooo  ← all explorers meet
+   3   |_________________________
+          bottom of the valley!
+```
+
+They’ve reached the **lowest valley** — the algorithm stops.
+
+---
+
+### 🧭 Summary
+
+| Move        | Meaning              | Goal                   |
+| ----------- | -------------------- | ---------------------- |
+| Reflection  | Flip worst point     | Try other side of hill |
+| Expansion   | Go further downhill  | Find deeper valley     |
+| Contraction | Step back halfway    | Fix overshoot          |
+| Shrink      | Pull points together | Refine search          |
+
+---
+
+Would you like me to make the same thing but **in a sideways (2D hill-profile)** view — so it looks like they’re actually sliding down a slope?
+
+///////
+
+
